@@ -1,0 +1,34 @@
+name: CI - Validação do Projeto
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validacao:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Verificar se index.html existe
+        run: |
+          if [ -f index.html ]; then
+            echo "index.html encontrado com sucesso!"
+          else
+            echo "ERRO: index.html não encontrado!"
+            exit 1
+          fi
+
+      - name: Validar estrutura HTML
+        run: |
+          grep -q "<html" index.html
+          grep -q "</html>" index.html
+          grep -q "<body>" index.html
+          grep -q "</body>" index.html
+          echo "Validação concluída com sucesso!"
