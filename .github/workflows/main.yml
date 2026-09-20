@@ -1,4 +1,4 @@
-name: CI - Validação do Projeto
+name: CI/CD - GitHub Pages
 
 on:
   push:
@@ -7,6 +7,11 @@ on:
   pull_request:
     branches:
       - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   validacao:
@@ -32,3 +37,22 @@ jobs:
           grep -q "<body>" index.html
           grep -q "</body>" index.html
           echo "Validação concluída com sucesso!"
+
+  deploy:
+    needs: validacao
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Fazer upload do site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Publicar no GitHub Pages
+        uses: actions/deploy-pages@v4
